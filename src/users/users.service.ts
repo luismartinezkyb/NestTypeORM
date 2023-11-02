@@ -5,15 +5,21 @@ import { Repository, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateProfileDto } from './dto/create-profile.dto';
+import { Profile } from './profile.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Profile) private profileRepository: Repository<Profile>,
   ) {}
 
   getUsers(): Promise<User[]> {
-    const users = this.userRepository.find();
+    const users = this.userRepository.find({
+      relations: {
+        profile: true,
+      },
+    });
     return users;
   }
   getUser(id: number): Promise<User> {
@@ -39,10 +45,11 @@ export class UsersService {
     return updatedUser;
   }
 
-  // async createProfile(id:number, profile: CreateProfileDto) {
-  //   const user = await this.userRepository.findOne({ where: { id } });
-    
-    
-    
-  // }
+  async createProfile(id: number, profile: CreateProfileDto) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    const profileCreated = await this.profileRepository.create(profile);
+    const savedProfile = await this.profileRepository.save(profileCreated);
+    user.profile = savedProfile;
+    return this.userRepository.save(user);
+  }
 }

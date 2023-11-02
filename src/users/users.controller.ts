@@ -3,6 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { User } from './users.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateProfileDto } from './dto/create-profile.dto';
 
 @Controller('users')
 export class UsersController {
@@ -16,7 +17,6 @@ export class UsersController {
   @Get(':id')
   async getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
     const user = await this.usersService.getUser(id);
-    console.log(user);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -59,5 +59,18 @@ export class UsersController {
       }
     }
     return this.usersService.updateUser(id, user);
+  }
+
+  @Post('/profile/:id')
+  async createProfile(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() profile: CreateProfileDto,
+  ) {
+    const user = await this.usersService.getUser(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const profileCreated = await this.usersService.createProfile(id, profile);
+    return profileCreated;
   }
 }

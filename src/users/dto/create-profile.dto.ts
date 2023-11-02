@@ -2,14 +2,12 @@ import { IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateProfileDto {
   @IsString()
-  @IsOptional()
-  lastname?: string;
+  lastname: string;
 
   @IsString()
-  @IsOptional()
-  firstname?: string;
+  firstname: string;
 
   @IsNumber()
   @IsOptional()
-  age?: string;
+  age?: number;
 }
