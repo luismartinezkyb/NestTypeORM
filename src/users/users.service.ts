@@ -16,9 +16,11 @@ export class UsersService {
 
   getUsers(): Promise<User[]> {
     const users = this.userRepository.find({
-      relations: {
-        profile: true,
-      },
+      relations: ['posts', 'profile'],
+      // relations: {
+      //   profile: true,
+      //   posts: true,
+      // },
     });
     return users;
   }

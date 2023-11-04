@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UsersService } from 'src/users/users.service';
-import { Repository } from 'typeorm';
 import { Post } from './posts.entity';
+import { Repository } from 'typeorm';
+import { UsersService } from 'src/users/users.service';
 import { CreatePostDto } from './dto/create-post.dto';
 
 @Injectable()
@@ -12,6 +12,23 @@ export class PostsService {
     private userService: UsersService,
   ) {}
 
-  createPost(post: CreatePostDto) {}
-  getPost(id: number) {}
+  async createPost(post: CreatePostDto) {
+    const user = await this.userService.getUser(post.authorId);
+    if (!user) {
+      throw new HttpException('User not found', 404);
+    }
+    const data = this.postRepository.create(post);
+
+    const newPost = await this.postRepository.save(data);
+    return newPost;
+  }
+  async getPosts(): Promise<Post[]> {
+    return this.postRepository.find({
+      relations: ['author'],
+    });
+  }
+
+  async getPostsByUser(id: number): Promise<Post[]> {
+    return this.postRepository.find({ where: { authorId: id } });
+  }
 }

@@ -5,7 +5,6 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 export class Post {
   @PrimaryGeneratedColumn()
   id: number;
-
   @Column()
   title: string;
   @Column()
