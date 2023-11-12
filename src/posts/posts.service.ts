@@ -11,7 +11,7 @@ export class PostsService {
     @InjectRepository(Post) private postRepository: Repository<Post>,
     private userService: UsersService,
   ) {}
-
+  //O PODEMOS USAR UNA INYECCION DE SERVICIO O INYECCION DE REPOSITORIO
   async createPost(post: CreatePostDto) {
     const user = await this.userService.getUser(post.authorId);
     if (!user) {
