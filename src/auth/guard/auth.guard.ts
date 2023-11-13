@@ -22,7 +22,10 @@ export class AuthGuard implements CanActivate {
       //   throw new UnauthorizedException('TOKEN_NOT_VALID');
       // }
       // console.log(isValidToken);
-      request['user_token'] = isValidToken.username;
+      request['user'] = {
+        username: isValidToken.username,
+        role: isValidToken.role,
+      };
       return true;
     } catch (error) {
       console.log(error);
